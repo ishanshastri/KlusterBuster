@@ -30,7 +30,8 @@ class Kluster:
         if iters==0:
             return k_pts
 
-        v_addToBins = np.vectorize(self._addToBin, excluded=['k_pts'])
+        v_addToBins = np.vectorize(self._addToBin, otypes=[float], excluded=['k_pts'])
+        #v_addToBins = np.frompyfunc(self._addToBin, 1, 1)
         v_addToBins(data, k_pts)
     
         #for k in k_pts:
@@ -41,7 +42,9 @@ class Kluster:
 
         v_resetMonKeys = np.vectorize(self._resetMonKey, excluded=['k_pts'])
         keys = list(k_pts.keys())#np.array(k_pts.keys())
-        v_resetMonKeys(keys, k_pts)
+        #v_resetMonKeys(keys, k_pts)
+        self._resetKeys(k_pts)
+
         #self._resetMonKey(10, k_pts)
         print(k_pts)
         #for d in data:
@@ -52,6 +55,16 @@ class Kluster:
         avg = np.array(k_pts[key]).mean()
         #key = avg
         self._changeMonKey(k_pts, key, avg)
+
+    def _resetKeys(self, k_pts):
+        keys = list(k_pts.keys())
+        for k in keys:
+            avg = np.array(k_pts[k]).mean()
+            #k_pts[k] = avg
+            #print(avg)
+            #print(avg)
+            self._changeMonKey(k_pts, k, avg)
+
 
     def _getNearestBin(self, point, bins):
         """
@@ -67,16 +80,19 @@ class Kluster:
         return bin
         
     def _addToBin(self, point, k_pts):
+        #print(point)
         bin = self._getNearestBin(point, k_pts.keys())
         k_pts[bin].append(point)
 
     def _changeMonKey(self, dict, old_key, mon_key):
+        if old_key == mon_key:
+            return
         dict[mon_key] = dict[old_key]
         dict.pop(old_key)
 
 ex = Kluster(3, lambda a, b:abs(a-b))#, lambda y:y)
-print(ex.K)
-print(ex.Distance(5, 4))
+#print(ex.K)
+#print(ex.Distance(5, 4))
 #ex._kluster(None, None)
 bins = {0: [], 5: [], 10: []}
 data = np.array([i for i in range(20)])
