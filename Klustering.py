@@ -15,16 +15,29 @@ class Kluster:
         #self.Difference = diff
 
     #Public Methods
-    def Kluster(self, data, k = -1, iters = 4):
+    def Kluster(self, data, k = -1, iters=-1, cond=None):
         """
         data is a list of 'points' in given input space; wrapper func.
         Return: dictionary mapping K-points to corresponding datapoints contained in each bin
         """
         if k==-1:
             k=self.K
+        
+        #if iters==-1:
+
+
+        #Generate starting sample
+        k_pts = self._genSeed(data, k)
+
+        #call func
+        return self._kluster(data, k_pts, iters)
 
     #Private Methods
     #def min
+    def _genSeed(self, data, k):
+        #STUB: TODO
+        bins = {0: [], 5: [], 10: []}
+        return bins
 
     def _kluster(self, data, k_pts, iters):
         """
@@ -95,5 +108,6 @@ class Kluster:
 ex = Kluster(3, lambda a, b:abs(a-b))#K=3
 bins = {0: [], 5: [], 10: []}
 data = np.array([i for i in range(20)])
-print(ex._kluster(data, bins, 9))
+#print(ex._kluster(data, bins, 9))
+print(ex.Kluster(data, 3, 9))
 #print(ex.Klusters)
